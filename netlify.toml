@@ -1,0 +1,4 @@
+[build]
+  # pnpm isn't always on PATH in the build shell, so fetch the pinned version via npx.
+  command = "npx -y pnpm@10.33.0 install --frozen-lockfile && node src/build.js"
+  publish = "dist"
