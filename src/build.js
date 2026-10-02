@@ -1236,7 +1236,11 @@ function browserVendorModule(manifest) {
     epoxy: manifest.vendor.epoxy,
     libcurl: manifest.vendor.libcurl,
   };
-  return `self.__deps = ${JSON.stringify(map, null, 2)};\n`;
+  // Static hosts (e.g. Netlify) can't run the Wisp WebSocket server, so a build can bake in an
+  // external default via WISP_URL. Without it the client uses the same-origin /wisp/ endpoint.
+  const wisp = process.env.WISP_URL?.trim();
+  const wispLine = wisp && /^wss?:\/\//i.test(wisp) ? `self.__wisp = ${JSON.stringify(wisp)};\n` : "";
+  return `self.__deps = ${JSON.stringify(map, null, 2)};\n${wispLine}`;
 }
 
 function formatKb(bytes) {
